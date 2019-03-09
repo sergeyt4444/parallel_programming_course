@@ -234,7 +234,7 @@ int main(int argc, char* argv[])
 			delete[] Envelope;
 		}
 	}
-//	times =
+//	times 
 //	std::cout << "time: " << (times - timef) << endl;
 //	std::cout << "time without initialisation and preparations: " << (times - timepart) << std::endl;
 	delete[] X_coord;
