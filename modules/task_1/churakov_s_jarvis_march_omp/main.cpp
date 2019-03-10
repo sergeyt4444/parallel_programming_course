@@ -94,7 +94,7 @@ int FindPWithMinAngle(double* X, double* Y, int Size, double x1, double y1, doub
     return NextPointInd;
 }
 
-void ElimPointsOnLines(double* X, double* Y, int* Envelope, int& Size) {
+void ElimPointsOnLines(double* X, double* Y, int* Envelope, int* Size) {
     int i = 1;
     while (i != Size) {
         if ((double)((double)(X[Envelope[i]] - X[Envelope[i - 1]])*(double)(Y[Envelope[i + 1]] - Y[Envelope[i]])) ==
@@ -157,15 +157,15 @@ int main(int argc, char* argv[]) {
             int PNum = 1;
             int FirstPoint = FindBLPoint(X_coord, Y_coord, Size);
             Envelope[0] = FirstPoint;
-            Envelope[1] = FindPWithMinAngle(X_coord, Y_coord, Size, X_coord[FirstPoint] - 1, 
+            Envelope[1] = FindPWithMinAngle(X_coord, Y_coord, Size, X_coord[FirstPoint] - 1,
             Y_coord[FirstPoint], X_coord[FirstPoint], Y_coord[FirstPoint]);
             while (Envelope[PNum] != FirstPoint) {
-                PNum++;                        
+                PNum++;
                 if (PNum == dynsize) {
                     dynsize += step;
                     Envelope = (int*)realloc(Envelope, sizeof(int) * (dynsize));
                 }
-                Envelope[PNum] = FindPWithMinAngle(X_coord, Y_coord, Size, X_coord[Envelope[PNum - 2]], 
+                Envelope[PNum] = FindPWithMinAngle(X_coord, Y_coord, Size, X_coord[Envelope[PNum - 2]],
                 Y_coord[Envelope[PNum - 2]], X_coord[Envelope[PNum - 1]], Y_coord[Envelope[PNum - 1]]);
             }
             ElimPointsOnLines(X_coord, Y_coord, Envelope, PNum);
