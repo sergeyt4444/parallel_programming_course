@@ -1,6 +1,6 @@
 //  Copyright 2019 Churakov Sergey
 #include <iostream>
-#include <iomanip> 
+#include <iomanip>
 #include <ctime>
 #include <cstdlib>
 #include <cmath>
