@@ -190,10 +190,10 @@ int main(int argc, char* argv[]) {
             }
             delete[] Envelope;
         }
-    }	
+    }
     timef = time(NULL);
     clockf = clock();
-//	times =
+//    times =
     std::cout << std::endl;
     std::cout << "time: " << difftime(timef, times) << std::endl;
     std::cout << "time without initialisation and preparations: " << difftime(time_part, timef) << std::endl;
