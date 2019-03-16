@@ -122,7 +122,7 @@ int main(int argc, char* argv[]) {
     clock_t clocks, clock_part, clockf;
     times = time(NULL);
     clocks = clock();
-    srand(time(0));
+    srand((unsigned int)time(NULL));
     int Size = 100;
     if (argc != 1 && argc != 2 && argc != 4)
         return 1;
