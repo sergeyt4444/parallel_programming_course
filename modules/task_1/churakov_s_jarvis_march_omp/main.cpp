@@ -110,7 +110,7 @@ void ElimPointsOnLines(double* X, double* Y, int* Envelope, int* Size) {
                 Envelope[i + j] = Envelope[i + j + 1];
                 j++;
             }
-            *Size= *Size - 1;
+            *Size = *Size - 1;
             i--;
         }
         i++;
