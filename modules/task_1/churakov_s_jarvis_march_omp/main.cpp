@@ -47,8 +47,7 @@ int FindBLPoint(double* X, double* Y, const int& Size) {
     for (int i = 1; i < Size; i++) {
         if (Y[i] < Y[pointInd]) {
             pointInd = i;
-        }
-        else {
+        } else {
             if (Y[i] == Y[pointInd] && X[i] < X[pointInd])
                 pointInd = i;
         }
@@ -62,8 +61,7 @@ int FindTRPoint(double* X, double* Y, const int& Size) {
     for (int i = 1; i < Size; i++) {
         if (Y[i] > Y[pointInd]) {
             pointInd = i;
-        }
-        else {
+        } else {
             if (Y[i] == Y[pointInd] && X[i] > X[pointInd])
                 pointInd = i;
         }
@@ -100,19 +98,19 @@ int FindPWithMinAngle(double* X, double* Y, const int& Size,
     return NextPointInd;
 }
 
-void ElimPointsOnLines(double* X, double* Y, int* Envelope, int& Size) {
+void ElimPointsOnLines(double* X, double* Y, int* Envelope, int* Size) {
     int i = 1;
-    while (i != Size) {
+    while (i != *Size) {
         if (static_cast<double>(static_cast<double>(X[Envelope[i]] - X[Envelope[i - 1]])*
             static_cast<double>(Y[Envelope[i + 1]] - Y[Envelope[i]])) ==
             static_cast<double>(static_cast<double>(X[Envelope[i + 1]] - X[Envelope[i]])*
                 static_cast<double>(Y[Envelope[i]] - Y[Envelope[i - 1]]))) {
             int j = 0;
-            while (i + j < Size) {
+            while (i + j < *Size) {
                 Envelope[i + j] = Envelope[i + j + 1];
                 j++;
             }
-            Size--;
+            *Size--;
             i--;
         }
         i++;
@@ -146,8 +144,7 @@ int main(int argc, char* argv[]) {
         //        if (Size >(maxRand - minRand + 1)*(maxRand - minRand + 1))
         //            return 1;
         //        ReinitEqPoints(X_coord, Y_coord, Size, minRand, maxRand);
-    }
-    else {
+    } else {
         RandomizeArray(X_coord, Size);
         RandomizeArray(Y_coord, Size);
         //        if (Size > 101 * 101)
@@ -161,14 +158,12 @@ int main(int argc, char* argv[]) {
     if (Size == 1) {
         std::cout << "Result chain of points is a single point:" << std::endl;
         std::cout << std::setw(3) << X_coord[0] << ", " << Y_coord[0] << "; ";
-    }
-    else {
+    } else {
         if (Size == 2) {
             std::cout << "Result chain of points is" << std::endl;
             std::cout << std::setw(3) << X_coord[0] << ", " << Y_coord[0] << "; ";
             std::cout << std::setw(3) << X_coord[1] << ", " << Y_coord[1] << "; ";
-        }
-        else {
+        } else {
             int dynsize = step;
             int* Envelope = static_cast<int*>(malloc(sizeof(int) * dynsize));
             int PNum = 1;
@@ -185,7 +180,7 @@ int main(int argc, char* argv[]) {
                 Envelope[PNum] = FindPWithMinAngle(X_coord, Y_coord, Size, X_coord[Envelope[PNum - 2]],
                     Y_coord[Envelope[PNum - 2]], X_coord[Envelope[PNum - 1]], Y_coord[Envelope[PNum - 1]]);
             }
-            ElimPointsOnLines(X_coord, Y_coord, Envelope, PNum);
+            ElimPointsOnLines(X_coord, Y_coord, Envelope, &PNum);
             if (PNum < 3) {
                 std::cout << "Result chain of points is a line" << std::endl;
                 int point;
@@ -193,8 +188,7 @@ int main(int argc, char* argv[]) {
                 std::cout << std::setw(3) << X_coord[point] << ", " << Y_coord[point] << "; ";
                 point = FindTRPoint(X_coord, Y_coord, Size);
                 std::cout << std::setw(3) << X_coord[point] << ", " << Y_coord[point] << "; ";
-            }
-            else {
+            } else {
                 std::cout << "Result chain of points is" << std::endl;
                 for (int i = 0; i < PNum; i++) {
                     std::cout << std::setw(3) << X_coord[Envelope[i]] << ", " << Y_coord[Envelope[i]] << "; ";
