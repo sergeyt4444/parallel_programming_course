@@ -1,10 +1,10 @@
 //  Copyright 2019 Churakov Sergey
+#include <omp.h>
 #include <iostream>
 #include <iomanip>
 #include <ctime>
 #include <cstdlib>
 #include <cmath>
-#include <omp.h>
 #define step 1000
 #define chunk 2500
 
@@ -233,8 +233,9 @@ int main(int argc, char* argv[]) {
     if (argc == 3) {
         int numt = atoi(argv[2]);
         if (numt > 0 && numt < 65)
+        {
             omp_set_num_threads(numt);
-        else {
+        } else {
             return 1;
         }
     }
@@ -279,8 +280,7 @@ int main(int argc, char* argv[]) {
             ElimPointsOnLines(X_coord, Y_coord, Envelope, &PNum);
             time_part_fin = omp_get_wtime();
             dynsize = step;
-
-            //Sequential implementation
+//          Sequential implementation
             int* EnvelopeForCheck = static_cast<int*>(malloc(sizeof(int) * dynsize));
             int PNumForCheck = 1;
             int Correct = 1;
