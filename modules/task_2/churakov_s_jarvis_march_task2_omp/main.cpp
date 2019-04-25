@@ -265,6 +265,15 @@ int main(int argc, char* argv[]) {
             Envelope[0] = FirstPoint;
             Envelope[1] = FindPWithMinAngleParallel(X_coord, Y_coord, Size, X_coord[FirstPoint] - 1,
                 Y_coord[FirstPoint], X_coord[FirstPoint], Y_coord[FirstPoint]);
+            if (Envelope[1] == -1) {
+                std::cout << "Result may be a single point or error" << std::endl;
+                std::cout << "Result point may be: ";
+                std::cout << X_coord[Envelope[0]] << " " << Y_coord[Envelope[0]] << std::endl;
+                free(Envelope);
+                delete[] X_coord;
+                delete[] Y_coord;
+                return 1;
+            }
             while (Envelope[PNum] != FirstPoint && ((X_coord[FirstPoint] != X_coord[Envelope[PNum]])
                 ||(Y_coord[FirstPoint] != Y_coord[Envelope[PNum]]))) {
                 PNum++;
@@ -287,6 +296,16 @@ int main(int argc, char* argv[]) {
             EnvelopeForCheck[0] = FirstPointForCheck;
             EnvelopeForCheck[1] = FindPWithMinAngle(X_coord, Y_coord, Size, X_coord[FirstPointForCheck] - 1,
                 Y_coord[FirstPointForCheck], X_coord[FirstPointForCheck], Y_coord[FirstPointForCheck]);
+            if (Envelope[1] == -1) {
+                std::cout << "Result may be a single point or error" << std::endl;
+                std::cout << "Result point may be: ";
+                std::cout << X_coord[Envelope[0]] << " " << Y_coord[Envelope[0]] << std::endl;
+                free(EnvelopeForCheck);
+                free(Envelope);
+                delete[] X_coord;
+                delete[] Y_coord;
+                return 1;
+            }
             while (EnvelopeForCheck[PNumForCheck] != FirstPointForCheck && Correct &&
                 ((X_coord[FirstPointForCheck] != X_coord[EnvelopeForCheck[PNumForCheck]])
                 || (Y_coord[FirstPointForCheck] != Y_coord[EnvelopeForCheck[PNumForCheck]]))) {
@@ -339,7 +358,7 @@ int main(int argc, char* argv[]) {
             double acc = (time_part_seq_fin - time_part_seq) / (time_part_seq - time_part);
             std::cout << "Acceleration: " << acc << std::endl;
             std::cout << "Efficiency: " << acc / omp_get_max_threads() << std::endl;
-            delete[] Envelope;
+            free(Envelope);
             delete[] EnvelopeForCheck;
         }
     }
