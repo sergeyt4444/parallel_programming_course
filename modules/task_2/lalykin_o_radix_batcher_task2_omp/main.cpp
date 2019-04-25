@@ -230,7 +230,7 @@ class Task {
 
     void RunDefault() {
         int i;
-        Size = 4123;
+        Size = 40000123;
 
         list = new union Int32[Size];
         listS = new union Int32[Size];

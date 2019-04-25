@@ -351,7 +351,7 @@ int main(int argc, char **argv) {
     serialTime = omp_get_wtime() - serialTime;
     std::cout << "Starting second serial alghorithm..." << std::endl;
     serialTime2 = omp_get_wtime();
-    MultiplicationCompare(A, B, &D);
+    Multiplication(A, B, &D);
     serialTime2 = omp_get_wtime() - serialTime2;
 
     std::cout << "Starting parallel alghorithm..." << std::endl;
