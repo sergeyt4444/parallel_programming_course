@@ -140,7 +140,6 @@ int FindPWithMinAngle(double* X, double* Y, const int& Size,
 
 int FindPWithMinAngleParallel(double* X, double* Y, const int& Size,
     const double &x1, const double& y1, const double& x2, const double& y2) {
-    double maxCos = -1.5;
     int NextPointInd = -1;
     int i;
     double tmp;
@@ -198,8 +197,8 @@ void ElimPointsOnLines(double* X, double* Y, int* Envelope, int* Size) {
 }
 
 int main(int argc, char* argv[]) {
-    double times, time_part, time_part_fin, timef;
-    double time_part_seq, time_part_seq_fin;
+    double times = 0, time_part = 0, time_part_fin = 0, timef = 0;
+    double time_part_seq = 0, time_part_seq_fin = 0;
     times = omp_get_wtime();
     srand((unsigned int)time(NULL));
     int Size = 100;
@@ -331,19 +330,19 @@ int main(int argc, char* argv[]) {
                     std::cout << std::setw(3) << X_coord[Envelope[i]] << ", " << Y_coord[Envelope[i]] << "; ";
                 }
             }
+            timef = omp_get_wtime();
+            std::cout << std::endl;
+            std::cout << "time: " << timef - times << std::endl;
+            std::cout << "time without initialisation and preparations: " << time_part_fin - time_part << std::endl;
+            std::cout << "time of sequential execution of the same task: " << time_part_seq_fin - time_part_seq;
+            std::cout << std::endl;
+            double acc = (time_part_seq_fin - time_part_seq) / (time_part_seq - time_part);
+            std::cout << "Acceleration: " << acc << std::endl;
+            std::cout << "Efficiency: " << acc / omp_get_max_threads() << std::endl;
             delete[] Envelope;
+            delete[] EnvelopeForCheck;
         }
     }
-    timef = omp_get_wtime();
-    //    times =
-    std::cout << std::endl;
-    std::cout << "time: " << timef - times << std::endl;
-    std::cout << "time without initialisation and preparations: " << time_part_fin - time_part << std::endl;
-    std::cout << "time of sequential execution of the same task: " << time_part_seq_fin - time_part_seq;
-    std::cout << std::endl;
-    double acc = (time_part_seq_fin - time_part_seq) / (time_part_seq - time_part);
-    std::cout << "Acceleration: " << acc << std::endl;
-    std::cout << "Efficiency: " << acc / omp_get_max_threads() << std::endl;
     delete[] X_coord;
     delete[] Y_coord;
     return 0;
