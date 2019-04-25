@@ -232,8 +232,7 @@ int main(int argc, char* argv[]) {
     }
     if (argc == 3) {
         int numt = atoi(argv[2]);
-        if (numt > 0 && numt < 65)
-        {
+        if (numt > 0 && numt < 65) {
             omp_set_num_threads(numt);
         } else {
             return 1;
