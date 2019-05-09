@@ -261,7 +261,8 @@ int main(int argc, char* argv[]) {
     double* X_coord = new double[Size];
     double* Y_coord = new double[Size];
     std::cout << std::endl;
-    std::cout << "4 threads are working by default" << std::endl;
+    std::cout << tbb::task_scheduler_init::default_num_threads()
+        << " threads are working by default" << std::endl;
     if (argc == 4 || argc == 5) {
         int minRand, maxRand;
         minRand = atol(argv[2]);
@@ -315,13 +316,13 @@ int main(int argc, char* argv[]) {
             int PNum = 1;
             time_part = tbb::tick_count::now();
             BLPointSearch searchBLP(X_coord, Y_coord);
-            tbb::parallel_reduce(tbb::blocked_range<int>(0, Size), searchBLP, tbb::affinity_partitioner());
+            tbb::parallel_reduce(tbb::blocked_range<int>(0, Size), searchBLP);
             int FirstPoint = searchBLP.getResult();
 //            int FirstPoint = FindBLPoint(X_coord, Y_coord, Size);
             Envelope[0] = FirstPoint;
             MinAngleSearch jarvis(X_coord, Y_coord, X_coord[FirstPoint] - 1,
                 Y_coord[FirstPoint], X_coord[FirstPoint], Y_coord[FirstPoint]);
-            tbb::parallel_reduce(tbb::blocked_range<int>(0, Size), jarvis, tbb::affinity_partitioner());
+            tbb::parallel_reduce(tbb::blocked_range<int>(0, Size), jarvis);
             Envelope[1] = jarvis.getResult();
 //            Envelope[1] = FindPWithMinAngleParallel(X_coord, Y_coord, Size, X_coord[FirstPoint] - 1,
  //               Y_coord[FirstPoint], X_coord[FirstPoint], Y_coord[FirstPoint]);
@@ -343,7 +344,7 @@ int main(int argc, char* argv[]) {
                 }
                 jarvis.reinit(X_coord[Envelope[PNum - 2]], Y_coord[Envelope[PNum - 2]],
                     X_coord[Envelope[PNum - 1]], Y_coord[Envelope[PNum - 1]]);
-                tbb::parallel_reduce(tbb::blocked_range<int>(0, Size), jarvis, tbb::affinity_partitioner());
+                tbb::parallel_reduce(tbb::blocked_range<int>(0, Size), jarvis);
                 Envelope[PNum] = jarvis.getResult();
 //                Envelope[PNum] = FindPWithMinAngleParallel(X_coord, Y_coord, Size, X_coord[Envelope[PNum - 2]],
 //                    Y_coord[Envelope[PNum - 2]], X_coord[Envelope[PNum - 1]], Y_coord[Envelope[PNum - 1]]);
