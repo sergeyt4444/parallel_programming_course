@@ -123,134 +123,134 @@ void ElimPointsOnLines(double* X, double* Y, int* Envelope, int* Size) {
 
 class BLPointSearch {
  private:
-	double* X;
-	double* Y;
-	int Result;
+    double* X;
+    double* Y;
+    int Result;
 
  public:
-	explicit BLPointSearch(double* X_coord, double* Y_coord) {
-		X = X_coord;
-		Y = Y_coord;
-		Result = 0;
-	}
+    explicit BLPointSearch(double* X_coord, double* Y_coord) {
+        X = X_coord;
+        Y = Y_coord;
+        Result = 0;
+    }
 
-	BLPointSearch(const BLPointSearch& m, tbb::split) {
-		X = m.X;
-		Y = m.Y;
-		Result = 0;
-	}
+    BLPointSearch(const BLPointSearch& m, tbb::split) {
+        X = m.X;
+        Y = m.Y;
+        Result = 0;
+    }
 
-	void operator()(const tbb::blocked_range<int>& r) {
-		int begin = r.begin();
-		int end = r.end();
-		for (int i = begin; i < end; i++) {
-			if (Y[i] < Y[Result]) {
-				Result = i;
-			} else {
-				if (Y[i] == Y[Result] && X[i] < X[Result])
-					Result = i;
-			}
-		}
-	}
+    void operator()(const tbb::blocked_range<int>& r) {
+        int begin = r.begin();
+        int end = r.end();
+        for (int i = begin; i < end; i++) {
+            if (Y[i] < Y[Result]) {
+                Result = i;
+            } else {
+                if (Y[i] == Y[Result] && X[i] < X[Result])
+                    Result = i;
+            }
+        }
+    }
 
-	void join(const BLPointSearch& m) {
-		if (Y[m.Result] < Y[Result]) {
-			Result = m.Result;
-		} else {
-			if (Y[m.Result] == Y[Result] && X[m.Result] < X[Result])
-				Result = m.Result;
-		}
-	}
+    void join(const BLPointSearch& m) {
+        if (Y[m.Result] < Y[Result]) {
+            Result = m.Result;
+        } else {
+            if (Y[m.Result] == Y[Result] && X[m.Result] < X[Result])
+                Result = m.Result;
+        }
+    }
 
-	int getResult() {
-		return Result;
-	}
+    int getResult() {
+        return Result;
+    }
 };
 
 class MinAngleSearch {
  private:
-	double* X;
-	double* Y;
-	double x1, y1, x2, y2;
-	int Result;
-	double maxCos;
+    double* X;
+    double* Y;
+    double x1, y1, x2, y2;
+    int Result;
+    double maxCos;
 
  public:
-	explicit MinAngleSearch(double* X_coord, double* Y_coord, const double& x1,
-		const double& y1, const double& x2, const double& y2) {
-		X = X_coord;
-		Y = Y_coord;
-		this->x1 = x1;
-		this->y1 = y1;
-		this->x2 = x2;
-		this->y2 = y2;
-		Result = -1;
-		maxCos = -1.5;
-	}
+    explicit MinAngleSearch(double* X_coord, double* Y_coord, const double& x1,
+        const double& y1, const double& x2, const double& y2) {
+        X = X_coord;
+        Y = Y_coord;
+        this->x1 = x1;
+        this->y1 = y1;
+        this->x2 = x2;
+        this->y2 = y2;
+        Result = -1;
+        maxCos = -1.5;
+    }
 
-	MinAngleSearch(const MinAngleSearch& m, tbb::split) {
-		X = m.X;
-		Y = m.Y;
-		x1 = m.x1;
-		y1 = m.y1;
-		x2 = m.x2;
-		y2 = m.y2;
-		Result = -1;
-		maxCos = -1.5;
-	}
+    MinAngleSearch(const MinAngleSearch& m, tbb::split) {
+        X = m.X;
+        Y = m.Y;
+        x1 = m.x1;
+        y1 = m.y1;
+        x2 = m.x2;
+        y2 = m.y2;
+        Result = -1;
+        maxCos = -1.5;
+    }
 
 
-	void join(const MinAngleSearch& m) {
-		if (m.maxCos > maxCos) {
-			Result = m.Result;
-			maxCos = m.maxCos;
-		}
-	}
+    void join(const MinAngleSearch& m) {
+        if (m.maxCos > maxCos) {
+            Result = m.Result;
+            maxCos = m.maxCos;
+        }
+    }
 
-	void operator()(const tbb::blocked_range<int>& r) {
-		int begin = r.begin();
-		int end = r.end();
-		double tmp;
-		int tempResult = Result;
-		double tempmaxCos = maxCos;
-		for (int i = begin; i < end; i++) {
-			if (!((X[i] == x1 && Y[i] == y1) || (X[i] == x2 && Y[i] == y2))) {
-				if (((x2 - x1)*(Y[i] - y2) - (X[i] - x2)*(y2 - y1)) >= 0) {
-					tmp = (-1)*GetCos(x2, y2, x1, y1, X[i], Y[i]);
-					if (tmp > tempmaxCos) {
-						tempmaxCos = tmp;
-						tempResult = i;
-					}
-				}
-			}
-		}
-		Result = tempResult;
-		maxCos = tempmaxCos;
-	}
+    void operator()(const tbb::blocked_range<int>& r) {
+        int begin = r.begin();
+        int end = r.end();
+        double tmp;
+        int tempResult = Result;
+        double tempmaxCos = maxCos;
+        for (int i = begin; i < end; i++) {
+            if (!((X[i] == x1 && Y[i] == y1) || (X[i] == x2 && Y[i] == y2))) {
+                if (((x2 - x1)*(Y[i] - y2) - (X[i] - x2)*(y2 - y1)) >= 0) {
+                    tmp = (-1)*GetCos(x2, y2, x1, y1, X[i], Y[i]);
+                    if (tmp > tempmaxCos) {
+                        tempmaxCos = tmp;
+                        tempResult = i;
+                    }
+                }
+            }
+        }
+        Result = tempResult;
+        maxCos = tempmaxCos;
+    }
 
-	void reinit(const double& x1, const double& y1,
-		const double& x2, const double& y2) {
-		this->x1 = x1;
-		this->y1 = y1;
-		this->x2 = x2;
-		this->y2 = y2;
-		Result = -1;
-		maxCos = -1.5;
-	}
+    void reinit(const double& x1, const double& y1,
+        const double& x2, const double& y2) {
+        this->x1 = x1;
+        this->y1 = y1;
+        this->x2 = x2;
+        this->y2 = y2;
+        Result = -1;
+        maxCos = -1.5;
+    }
 
-	int getResult() {
-		return Result;
-	}
+    int getResult() {
+        return Result;
+    }
 };
 
 int main(int argc, char* argv[]) {
-	tbb::task_scheduler_init init(tbb::task_scheduler_init::automatic);
-	tbb::tick_count times, time_part, time_part_fin, timef;
-	tbb::tick_count time_part_seq, time_part_seq_fin;
+    tbb::task_scheduler_init init(tbb::task_scheduler_init::automatic);
+    tbb::tick_count times, time_part, time_part_fin, timef;
+    tbb::tick_count time_part_seq, time_part_seq_fin;
     times = tbb::tick_count::now();
     srand((unsigned int)time(NULL));
     int Size = 100;
-	int numt = 4;
+    int numt = 4;
     if (argc < 1 || argc > 5)
         return 1;
     if (argc > 1) {
@@ -283,9 +283,9 @@ int main(int argc, char* argv[]) {
     if (argc == 3) {
         numt = atoi(argv[2]);
         if (numt > 0 && numt < 65) {
-			init.terminate();
-			init.initialize(numt);
-			std::cout << "Number of threads was set to " << numt << std::endl;
+            init.terminate();
+            init.initialize(numt);
+            std::cout << "Number of threads was set to " << numt << std::endl;
         } else {
             return 1;
         }
@@ -293,9 +293,9 @@ int main(int argc, char* argv[]) {
     if (argc == 5) {
         numt = atoi(argv[4]);
         if (numt > 0 && numt < 65) {
-			init.terminate();
-			init.initialize(numt);
-			std::cout << "Number of threads was set to " << numt << std::endl;
+            init.terminate();
+            init.initialize(numt);
+            std::cout << "Number of threads was set to " << numt << std::endl;
         } else {
             return 1;
         }
@@ -314,26 +314,26 @@ int main(int argc, char* argv[]) {
             int* Envelope = static_cast<int*>(malloc(sizeof(int) * dynsize));
             int PNum = 1;
             time_part = tbb::tick_count::now();
-			BLPointSearch searchBLP(X_coord, Y_coord);
-			tbb::parallel_reduce(tbb::blocked_range<int>(0, Size), searchBLP, tbb::affinity_partitioner());
-			int FirstPoint = searchBLP.getResult();
-//			int FirstPoint = FindBLPoint(X_coord, Y_coord, Size);
+            BLPointSearch searchBLP(X_coord, Y_coord);
+            tbb::parallel_reduce(tbb::blocked_range<int>(0, Size), searchBLP, tbb::affinity_partitioner());
+            int FirstPoint = searchBLP.getResult();
+//            int FirstPoint = FindBLPoint(X_coord, Y_coord, Size);
             Envelope[0] = FirstPoint;
-			MinAngleSearch jarvis(X_coord, Y_coord, X_coord[FirstPoint] - 1,
-				Y_coord[FirstPoint], X_coord[FirstPoint], Y_coord[FirstPoint]);
-			tbb::parallel_reduce(tbb::blocked_range<int>(0, Size), jarvis, tbb::affinity_partitioner());
-			Envelope[1] = jarvis.getResult();
+            MinAngleSearch jarvis(X_coord, Y_coord, X_coord[FirstPoint] - 1,
+                Y_coord[FirstPoint], X_coord[FirstPoint], Y_coord[FirstPoint]);
+            tbb::parallel_reduce(tbb::blocked_range<int>(0, Size), jarvis, tbb::affinity_partitioner());
+            Envelope[1] = jarvis.getResult();
 //            Envelope[1] = FindPWithMinAngleParallel(X_coord, Y_coord, Size, X_coord[FirstPoint] - 1,
  //               Y_coord[FirstPoint], X_coord[FirstPoint], Y_coord[FirstPoint]);
-			if (Envelope[1] == -1) {
-				std::cout << "Result may be a single point or error" << std::endl;
-				std::cout << "Result point may be: ";
-				std::cout << X_coord[Envelope[0]] << " " << Y_coord[Envelope[0]] << std::endl;
-				free(Envelope);
-				delete[] X_coord;
-				delete[] Y_coord;
-				return 1;
-			}
+            if (Envelope[1] == -1) {
+                std::cout << "Result may be a single point or error" << std::endl;
+                std::cout << "Result point may be: ";
+                std::cout << X_coord[Envelope[0]] << " " << Y_coord[Envelope[0]] << std::endl;
+                free(Envelope);
+                delete[] X_coord;
+                delete[] Y_coord;
+                return 1;
+            }
             while (Envelope[PNum] != FirstPoint && ((X_coord[FirstPoint] != X_coord[Envelope[PNum]])
                 ||(Y_coord[FirstPoint] != Y_coord[Envelope[PNum]]))) {
                 PNum++;
@@ -341,10 +341,10 @@ int main(int argc, char* argv[]) {
                     dynsize += step;
                     Envelope = static_cast<int*>(realloc(Envelope, sizeof(int) * (dynsize)));
                 }
-				jarvis.reinit(X_coord[Envelope[PNum - 2]], Y_coord[Envelope[PNum - 2]],
-					X_coord[Envelope[PNum - 1]], Y_coord[Envelope[PNum - 1]]);
-				tbb::parallel_reduce(tbb::blocked_range<int>(0, Size), jarvis, tbb::affinity_partitioner());
-				Envelope[PNum] = jarvis.getResult();
+                jarvis.reinit(X_coord[Envelope[PNum - 2]], Y_coord[Envelope[PNum - 2]],
+                    X_coord[Envelope[PNum - 1]], Y_coord[Envelope[PNum - 1]]);
+                tbb::parallel_reduce(tbb::blocked_range<int>(0, Size), jarvis, tbb::affinity_partitioner());
+                Envelope[PNum] = jarvis.getResult();
 //                Envelope[PNum] = FindPWithMinAngleParallel(X_coord, Y_coord, Size, X_coord[Envelope[PNum - 2]],
 //                    Y_coord[Envelope[PNum - 2]], X_coord[Envelope[PNum - 1]], Y_coord[Envelope[PNum - 1]]);
             }
@@ -360,16 +360,16 @@ int main(int argc, char* argv[]) {
             EnvelopeForCheck[0] = FirstPointForCheck;
             EnvelopeForCheck[1] = FindPWithMinAngle(X_coord, Y_coord, Size, X_coord[FirstPointForCheck] - 1,
                 Y_coord[FirstPointForCheck], X_coord[FirstPointForCheck], Y_coord[FirstPointForCheck]);
-			if (Envelope[1] == -1) {
-				std::cout << "Result may be a single point or error" << std::endl;
-				std::cout << "Result point may be: ";
-				std::cout << X_coord[Envelope[0]] << " " << Y_coord[Envelope[0]] << std::endl;
-				free(EnvelopeForCheck);
-				free(Envelope);
-				delete[] X_coord;
-				delete[] Y_coord;
-				return 1;
-			}
+            if (Envelope[1] == -1) {
+                std::cout << "Result may be a single point or error" << std::endl;
+                std::cout << "Result point may be: ";
+                std::cout << X_coord[Envelope[0]] << " " << Y_coord[Envelope[0]] << std::endl;
+                free(EnvelopeForCheck);
+                free(Envelope);
+                delete[] X_coord;
+                delete[] Y_coord;
+                return 1;
+            }
             while (EnvelopeForCheck[PNumForCheck] != FirstPointForCheck && Correct &&
                 ((X_coord[FirstPointForCheck] != X_coord[EnvelopeForCheck[PNumForCheck]])
                 || (Y_coord[FirstPointForCheck] != Y_coord[EnvelopeForCheck[PNumForCheck]]))) {
@@ -417,12 +417,12 @@ int main(int argc, char* argv[]) {
             std::cout << std::endl;
             std::cout << "time: " << (timef - times).seconds() << std::endl;
             std::cout << "time without initialisation and preparations: " <<
-				(time_part_fin - time_part).seconds() << std::endl;
+                (time_part_fin - time_part).seconds() << std::endl;
             std::cout << "time of sequential execution of the same task: " <<
-				(time_part_seq_fin - time_part_seq).seconds();
+                (time_part_seq_fin - time_part_seq).seconds();
             std::cout << std::endl;
             double acc = (time_part_seq_fin - time_part_seq).seconds() /
-				(time_part_seq - time_part).seconds();
+                (time_part_seq - time_part).seconds();
             std::cout << "Acceleration: " << acc << std::endl;
             std::cout << "Efficiency: " << acc / numt << std::endl;
             free(Envelope);
