@@ -250,7 +250,7 @@ int main(int argc, char* argv[]) {
     times = tbb::tick_count::now();
     srand((unsigned int)time(NULL));
     int Size = 100;
-    int numt = 4;
+    int numt = tbb::task_scheduler_init::default_num_threads();
     if (argc < 1 || argc > 5)
         return 1;
     if (argc > 1) {
